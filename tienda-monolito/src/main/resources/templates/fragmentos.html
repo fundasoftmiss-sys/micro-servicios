@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<th:block th:fragment="head">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Segoe UI, Arial, sans-serif; background: #f1f5f9; color: #1e293b; }
+    header { background: #1f3a5f; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header .marca { font-weight: 700; font-size: 18px; }
+    header .marca small { font-weight: 400; opacity: .75; margin-left: 10px; font-size: 12px; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; padding: 6px 10px; border-radius: 6px; }
+    nav a:hover, nav a.activo { background: #2a9d8f; }
+    main { max-width: 1000px; margin: 28px auto; padding: 0 20px; }
+    h1 { color: #1f3a5f; margin: 0 0 6px; }
+    .sub { color: #64748b; margin: 0 0 20px; }
+    .card { background: #fff; border-radius: 10px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; background: #1f3a5f; color: #fff; padding: 10px; font-size: 14px; }
+    td { padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    form.inline { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: end; }
+    label { display: block; font-size: 12px; color: #475569; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+    button { background: #2a9d8f; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #21867a; }
+    .ok { background: #dcfce7; color: #166534; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; }
+    .error { background: #fee2e2; color: #991b1b; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; }
+    .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .kpi { background: #fff; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-top: 4px solid #2a9d8f; }
+    .kpi .n { font-size: 40px; font-weight: 700; color: #1f3a5f; }
+    .kpi .t { color: #64748b; }
+    .nota { background: #fff7ed; border-left: 4px solid #e76f51; padding: 12px 16px; border-radius: 6px; font-size: 14px; }
+    code { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; }
+    .bajo { color: #b91c1c; font-weight: 600; }
+  </style>
+</th:block>
+</head>
+<body>
+<header th:fragment="cabecera(activo)">
+  <div class="marca">Tienda Monolito <small>Microservicios Essentials - Modulo 1</small></div>
+  <nav>
+    <a th:href="@{/}" th:classappend="${activo == 'inicio'} ? 'activo'">Inicio</a>
+    <a th:href="@{/productos}" th:classappend="${activo == 'productos'} ? 'activo'">Productos</a>
+    <a th:href="@{/clientes}" th:classappend="${activo == 'clientes'} ? 'activo'">Clientes</a>
+    <a th:href="@{/pedidos}" th:classappend="${activo == 'pedidos'} ? 'activo'">Pedidos</a>
+    <a th:href="@{/h2-console}" target="_blank">BD (H2)</a>
+  </nav>
+</header>
+</body>
+</html>

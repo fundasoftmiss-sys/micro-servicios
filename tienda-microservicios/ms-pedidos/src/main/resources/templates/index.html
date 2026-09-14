@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ms-pedidos</title>
+
+    <style>
+      :root{color-scheme:light dark}
+      *{box-sizing:border-box}
+      body{font-family:system-ui,"Segoe UI",sans-serif;margin:0;background:#f2f5f8;color:#16202a;line-height:1.55}
+      @media (prefers-color-scheme:dark){body{background:#11171d;color:#e2e9ef}}
+      .wrap{max-width:900px;margin:0 auto;padding:24px 18px 60px}
+      header{border-bottom:2px solid #1d4e89;padding-bottom:14px;margin-bottom:22px}
+      h1{margin:0 0 4px;font-size:26px}
+      .sub{color:#5a6a78;font-size:14px;margin:0}
+      nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+      nav a{font-size:13px;text-decoration:none;color:#1d4e89;border:1px solid #bfccd8;border-radius:99px;padding:5px 12px;background:#fff}
+      @media (prefers-color-scheme:dark){nav a{background:#1a232c;border-color:#32414e;color:#7baaf0}}
+      .card{background:#fff;border:1px solid #cfdae4;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+      @media (prefers-color-scheme:dark){.card{background:#18212a;border-color:#2c3a46}}
+      table{width:100%;border-collapse:collapse;font-size:14px}
+      th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #e2e9ef}
+      @media (prefers-color-scheme:dark){th,td{border-color:#2a3640}}
+      th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#5a6a78}
+      form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+      label{display:block;font-size:12px;color:#5a6a78;margin-bottom:3px}
+      select,input{padding:8px 10px;border:1px solid #bfccd8;border-radius:7px;font-size:14px;background:#fff;color:inherit}
+      @media (prefers-color-scheme:dark){select,input{background:#121a22;border-color:#32414e}}
+      button{padding:9px 18px;border:none;border-radius:7px;background:#1d4e89;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+      button:disabled{opacity:.45;cursor:not-allowed}
+      .ok{background:#dcf0e6;border:1px solid #12704e;color:#0b4a34;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+      .err{background:#f9e2de;border:1px solid #a32419;color:#7d1c13;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+      .warn{background:#f9ead9;border:1px solid #a0500a;color:#6d3707;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+      .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:6px}
+      .tile{background:#fff;border:1px solid #cfdae4;border-radius:10px;padding:14px 16px}
+      @media (prefers-color-scheme:dark){.tile{background:#18212a;border-color:#2c3a46}}
+      .tile .n{font-size:30px;font-weight:700;line-height:1.1}
+      .tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#5a6a78;margin-top:4px}
+      .tile.down .n{color:#a32419;font-size:17px}
+      .tile .src{font-size:11px;color:#8494a2;margin-top:7px;font-family:ui-monospace,Consolas,monospace}
+      .note{font-size:13px;color:#5a6a78;margin-top:18px;border-left:3px solid #a0500a;padding-left:14px}
+      code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:#e6edf4;padding:1px 5px;border-radius:4px}
+      @media (prefers-color-scheme:dark){code{background:#1f2a34}}
+      .empty{color:#8494a2;font-size:14px;padding:12px 0}
+    </style>
+
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>ms-pedidos</h1>
+        <p class="sub">Antes <code>tienda-monolito 1.0.0</code> &middot; ahora uno de tres servicios &middot; puerto 8080</p>
+        <nav>
+          <a href="/pedidos">Pedidos</a>
+          <a href="/api/pedidos">/api/pedidos</a>
+          <a href="/h2-console">Mi base de datos</a>
+          <a href="http://localhost:8081/productos">ms-productos :8081</a>
+          <a href="http://localhost:8082/clientes">ms-clientes :8082</a>
+        </nav>
+      </header>
+
+      <div class="tiles">
+        <div class="tile">
+          <div class="n" th:text="${totalPedidos}">0</div>
+          <div class="k">Pedidos</div>
+          <div class="src">base de datos local</div>
+        </div>
+
+        <div class="tile" th:classappend="${productosVivo} ? '' : 'down'">
+          <div class="n" th:if="${productosVivo}" th:text="${totalProductos}">0</div>
+          <div class="n" th:unless="${productosVivo}">no responde</div>
+          <div class="k">Productos</div>
+          <div class="src">GET :8081/productos</div>
+        </div>
+
+        <div class="tile" th:classappend="${clientesVivo} ? '' : 'down'">
+          <div class="n" th:if="${clientesVivo}" th:text="${totalClientes}">0</div>
+          <div class="n" th:unless="${clientesVivo}">no responde</div>
+          <div class="k">Clientes</div>
+          <div class="src">GET :8082/clientes</div>
+        </div>
+      </div>
+
+      <div class="note">
+        El primer contador sale de la base de datos de este servicio y siempre est&aacute; disponible.
+        Los otros dos viajan por la red y pueden fallar. Apaga <code>ms-productos</code> y recarga:
+        ver&aacute;s que la p&aacute;gina sigue sirviendo, solo que degradada. En el monolito los tres
+        contadores sal&iacute;an de la misma consulta, as&iacute; que o estaban los tres o no estaba ninguno.
+      </div>
+    </div>
+  </body>
+</html>

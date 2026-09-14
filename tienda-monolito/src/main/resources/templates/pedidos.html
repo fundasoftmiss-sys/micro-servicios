@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Pedidos - Tienda Monolito</title>
+  <th:block th:replace="~{fragmentos :: head}"></th:block>
+</head>
+<body>
+<header th:replace="~{fragmentos :: cabecera('pedidos')}"></header>
+<main>
+  <h1>Pedidos</h1>
+  <p class="sub">Modulo de ventas. Al crear un pedido se descuenta el stock del producto <b>en la misma transaccion</b>.</p>
+
+  <div th:if="${ok}" class="ok" th:text="${ok}"></div>
+  <div th:if="${error}" class="error" th:text="${error}"></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Nuevo pedido</h3>
+    <form class="inline" method="post" th:action="@{/pedidos}">
+      <div>
+        <label>Cliente</label>
+        <select name="clienteId" required>
+          <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre}"></option>
+        </select>
+      </div>
+      <div>
+        <label>Producto</label>
+        <select name="productoId" required>
+          <option th:each="p : ${productos}" th:value="${p.id}"
+                  th:text="${p.nombre + ' (stock: ' + p.stock + ')'}"></option>
+        </select>
+      </div>
+      <div><label>Cantidad</label><input name="cantidad" type="number" min="1" value="1" required></div>
+      <div><button type="submit">Crear pedido</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <table>
+      <tr><th>ID</th><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th></tr>
+      <tr th:each="pd : ${pedidos}">
+        <td th:text="${pd.id}"></td>
+        <td th:text="${#temporals.format(pd.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+        <td th:text="${pd.cliente.nombre}"></td>
+        <td th:text="${pd.producto.nombre}"></td>
+        <td th:text="${pd.cantidad}"></td>
+        <td th:text="${'$ ' + #numbers.formatDecimal(pd.total, 1, 2)}"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="nota">
+    <b>Para probar la regla de negocio:</b> intenta pedir 5 unidades del Monitor (solo hay 3). El servicio de pedidos
+    le pregunta al servicio de productos, este lanza la excepcion y el pedido no se crea. Todo dentro del mismo proceso.
+  </div>
+</main>
+</body>
+</html>

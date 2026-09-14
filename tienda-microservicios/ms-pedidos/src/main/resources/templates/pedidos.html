@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedidos &middot; ms-pedidos</title>
+
+    <style>
+      :root{color-scheme:light dark}
+      *{box-sizing:border-box}
+      body{font-family:system-ui,"Segoe UI",sans-serif;margin:0;background:#f2f5f8;color:#16202a;line-height:1.55}
+      @media (prefers-color-scheme:dark){body{background:#11171d;color:#e2e9ef}}
+      .wrap{max-width:900px;margin:0 auto;padding:24px 18px 60px}
+      header{border-bottom:2px solid #1d4e89;padding-bottom:14px;margin-bottom:22px}
+      h1{margin:0 0 4px;font-size:26px}
+      .sub{color:#5a6a78;font-size:14px;margin:0}
+      nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+      nav a{font-size:13px;text-decoration:none;color:#1d4e89;border:1px solid #bfccd8;border-radius:99px;padding:5px 12px;background:#fff}
+      @media (prefers-color-scheme:dark){nav a{background:#1a232c;border-color:#32414e;color:#7baaf0}}
+      .card{background:#fff;border:1px solid #cfdae4;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+      @media (prefers-color-scheme:dark){.card{background:#18212a;border-color:#2c3a46}}
+      table{width:100%;border-collapse:collapse;font-size:14px}
+      th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #e2e9ef}
+      @media (prefers-color-scheme:dark){th,td{border-color:#2a3640}}
+      th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#5a6a78}
+      form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+      label{display:block;font-size:12px;color:#5a6a78;margin-bottom:3px}
+      select,input{padding:8px 10px;border:1px solid #bfccd8;border-radius:7px;font-size:14px;background:#fff;color:inherit}
+      @media (prefers-color-scheme:dark){select,input{background:#121a22;border-color:#32414e}}
+      button{padding:9px 18px;border:none;border-radius:7px;background:#1d4e89;color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+      button:disabled{opacity:.45;cursor:not-allowed}
+      .ok{background:#dcf0e6;border:1px solid #12704e;color:#0b4a34;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+      .err{background:#f9e2de;border:1px solid #a32419;color:#7d1c13;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+      .warn{background:#f9ead9;border:1px solid #a0500a;color:#6d3707;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px}
+      .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:6px}
+      .tile{background:#fff;border:1px solid #cfdae4;border-radius:10px;padding:14px 16px}
+      @media (prefers-color-scheme:dark){.tile{background:#18212a;border-color:#2c3a46}}
+      .tile .n{font-size:30px;font-weight:700;line-height:1.1}
+      .tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#5a6a78;margin-top:4px}
+      .tile.down .n{color:#a32419;font-size:17px}
+      .tile .src{font-size:11px;color:#8494a2;margin-top:7px;font-family:ui-monospace,Consolas,monospace}
+      .note{font-size:13px;color:#5a6a78;margin-top:18px;border-left:3px solid #a0500a;padding-left:14px}
+      code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:#e6edf4;padding:1px 5px;border-radius:4px}
+      @media (prefers-color-scheme:dark){code{background:#1f2a34}}
+      .empty{color:#8494a2;font-size:14px;padding:12px 0}
+    </style>
+
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Pedidos</h1>
+        <p class="sub">El mismo controlador y el mismo formulario del monolito &middot; ahora con dos llamadas de red detr&aacute;s</p>
+        <nav>
+          <a href="/">Inicio</a>
+          <a href="/api/pedidos">/api/pedidos</a>
+          <a href="/h2-console">Mi base de datos</a>
+          <a href="http://localhost:8081/productos/reservas">Ver reservas de la saga</a>
+        </nav>
+      </header>
+
+      <div class="ok" th:if="${ok}" th:text="${ok}"></div>
+      <div class="err" th:if="${error}" th:text="${error}"></div>
+      <div class="warn" th:if="${aviso}">
+        <strong>Servicio no disponible.</strong>
+        <span th:text="${aviso}"></span>
+        El hist&oacute;rico de abajo se sigue viendo porque sale de la base de datos local.
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 12px;font-size:17px">Crear un pedido</h2>
+        <form method="post" action="/pedidos">
+          <div>
+            <label for="clienteId">Cliente</label>
+            <select id="clienteId" name="clienteId" required>
+              <option th:each="c : ${clientes}" th:value="${c.id()}" th:text="${c.nombre()}">Cliente</option>
+            </select>
+          </div>
+          <div>
+            <label for="productoId">Producto</label>
+            <select id="productoId" name="productoId" required>
+              <option th:each="p : ${productos}"
+                      th:value="${p.id()}"
+                      th:text="${p.nombre()} + ' — ' + ${p.precio()} + ' € (stock: ' + ${p.stock()} + ')'">Producto</option>
+            </select>
+          </div>
+          <div>
+            <label for="cantidad">Cantidad</label>
+            <input id="cantidad" type="number" name="cantidad" value="1" min="1" style="width:90px" required>
+          </div>
+          <button type="submit" th:disabled="${#lists.isEmpty(productos) or #lists.isEmpty(clientes)}">Crear pedido</button>
+        </form>
+        <p class="note" style="margin-top:16px">
+          Prueba a pedir <strong>5 monitores</strong>: solo hay 3. El error nace en <code>ms-productos</code>,
+          viaja como un <code>HTTP 409</code> y lo pinta este servicio. En el monolito ese mismo error
+          sub&iacute;a por la pila de llamadas sin tocar la red.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 12px;font-size:17px">Hist&oacute;rico</h2>
+        <p class="empty" th:if="${#lists.isEmpty(pedidos)}">Todav&iacute;a no hay pedidos.</p>
+        <table th:unless="${#lists.isEmpty(pedidos)}">
+          <thead>
+            <tr>
+              <th>#</th><th>Cliente</th><th>Producto</th>
+              <th>Precio</th><th>Cant.</th><th>Total</th><th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p : ${pedidos}">
+              <td th:text="${p.id}">1</td>
+              <td th:text="${p.clienteNombre}">Cliente</td>
+              <td th:text="${p.productoNombre}">Producto</td>
+              <td th:text="${p.precioUnitario} + ' €'">0</td>
+              <td th:text="${p.cantidad}">1</td>
+              <td th:text="${p.total} + ' €'">0</td>
+              <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Ni el nombre del cliente ni el del producto se piden por red: est&aacute;n <strong>copiados</strong>
+          en la tabla <code>PEDIDO</code> desde el momento de la compra. Por eso esta tabla funciona
+          con los otros dos servicios apagados, y por eso un pedido antiguo sigue mostrando el precio
+          que se cobr&oacute; aquel d&iacute;a aunque hoy el producto valga otra cosa.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

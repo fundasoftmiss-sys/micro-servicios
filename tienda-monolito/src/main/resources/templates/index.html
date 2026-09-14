@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Tienda Monolito</title>
+  <th:block th:replace="~{fragmentos :: head}"></th:block>
+</head>
+<body>
+<header th:replace="~{fragmentos :: cabecera('inicio')}"></header>
+<main>
+  <h1>Tienda Monolito</h1>
+  <p class="sub">Una sola aplicacion, un solo proceso, una sola base de datos.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n" th:text="${totalProductos}">0</div><div class="t">Productos</div></div>
+    <div class="kpi"><div class="n" th:text="${totalClientes}">0</div><div class="t">Clientes</div></div>
+    <div class="kpi"><div class="n" th:text="${totalPedidos}">0</div><div class="t">Pedidos</div></div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0;color:#1f3a5f">Como esta construida esta aplicacion</h3>
+    <table>
+      <tr><th>Capa</th><th>Que hace</th><th>Donde esta en el codigo</th></tr>
+      <tr><td>Vista</td><td>Paginas HTML que ve el usuario</td><td><code>resources/templates/*.html</code></td></tr>
+      <tr><td>Controlador</td><td>Recibe la peticion HTTP y decide que hacer</td><td><code>controller/*Controller.java</code></td></tr>
+      <tr><td>Servicio</td><td>Reglas de negocio (ej. descontar stock)</td><td><code>service/*Service.java</code></td></tr>
+      <tr><td>Repositorio</td><td>Lee y escribe en la base de datos</td><td><code>repository/*Repository.java</code></td></tr>
+      <tr><td>Modelo</td><td>Entidades: Producto, Cliente, Pedido</td><td><code>model/*.java</code></td></tr>
+      <tr><td>Base de datos</td><td>UNA sola BD compartida por todos los modulos</td><td><code>application.properties</code></td></tr>
+    </table>
+  </div>
+
+  <div class="nota">
+    <b>Pregunta para la clase:</b> si el modulo de <b>Pedidos</b> tiene un error y se cae, que pasa con <b>Productos</b> y <b>Clientes</b>?
+    Y si necesitamos escalar solo <b>Pedidos</b> porque es Black Friday?
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0;color:#1f3a5f">La misma informacion, expuesta como API REST (JSON)</h3>
+    <p>Los tres endpoints viven en el <b>mismo puerto</b> de la <b>misma aplicacion</b>:</p>
+    <ul>
+      <li><a th:href="@{/api/productos}" target="_blank">/api/productos</a></li>
+      <li><a th:href="@{/api/clientes}" target="_blank">/api/clientes</a></li>
+      <li><a th:href="@{/api/pedidos}" target="_blank">/api/pedidos</a></li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

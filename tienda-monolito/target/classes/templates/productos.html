@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Productos - Tienda Monolito</title>
+  <th:block th:replace="~{fragmentos :: head}"></th:block>
+</head>
+<body>
+<header th:replace="~{fragmentos :: cabecera('productos')}"></header>
+<main>
+  <h1>Productos</h1>
+  <p class="sub">Modulo de catalogo e inventario.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Nuevo producto</h3>
+    <form class="inline" method="post" th:action="@{/productos}">
+      <div><label>Nombre</label><input name="nombre" required></div>
+      <div><label>Precio</label><input name="precio" type="number" step="0.01" min="0" required></div>
+      <div><label>Stock</label><input name="stock" type="number" min="0" required></div>
+      <div><button type="submit">Guardar</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <table>
+      <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th></tr>
+      <tr th:each="p : ${productos}">
+        <td th:text="${p.id}"></td>
+        <td th:text="${p.nombre}"></td>
+        <td th:text="${'$ ' + #numbers.formatDecimal(p.precio, 1, 2)}"></td>
+        <td th:text="${p.stock}" th:classappend="${p.stock < 5} ? 'bajo'"></td>
+      </tr>
+    </table>
+  </div>
+</main>
+</body>
+</html>
