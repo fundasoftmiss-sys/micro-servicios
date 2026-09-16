@@ -1,0 +1,16 @@
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\config\DatosIniciales.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\controller\ApiController.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\controller\ClienteController.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\controller\HomeController.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\controller\PedidoController.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\controller\ProductoController.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\model\Cliente.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\model\Pedido.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\model\Producto.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\repository\ClienteRepository.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\repository\PedidoRepository.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\repository\ProductoRepository.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\service\ClienteService.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\service\PedidoService.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\service\ProductoService.java
+C:\Users\Public\Documents\CLASES\MICROSERVICIOS\Clase 1\actividad\tienda-monolito\src\main\java\com\netec\tienda\TiendaMonolitoApplication.java

@@ -1,0 +1,118 @@
+{
+  "info": {
+    "name": "Tienda Monolito",
+    "description": "Endpoints del monolito tienda-monolito (un solo proceso, puerto 8080).\n\nImporta tambien el entorno 'Tienda Monolito (local)' y seleccionalo arriba a la derecha.\n\nLa API JSON es solo de lectura (/api/...). Las altas se hacen con los mismos formularios de la web (POST x-www-form-urlencoded), que responden 302 y redirigen a la vista HTML.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. API JSON (lectura)",
+      "item": [
+        { "name": "Listar productos", "request": { "method": "GET", "url": "{{base_url}}/api/productos" } },
+        { "name": "Listar clientes",  "request": { "method": "GET", "url": "{{base_url}}/api/clientes" } },
+        {
+          "name": "Listar pedidos",
+          "request": { "method": "GET", "url": "{{base_url}}/api/pedidos" },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cada pedido trae el cliente y el producto anidados (llave foranea real)', () => {",
+                  "  const pedidos = pm.response.json();",
+                  "  pedidos.forEach(p => { pm.expect(p).to.have.property('cliente'); pm.expect(p).to.have.property('producto'); });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "description": "Fijate en que cada pedido incluye el objeto cliente y el objeto producto completos. En ms-pedidos solo hay ids y copias del nombre y del precio."
+        }
+      ]
+    },
+    {
+      "name": "2. Formularios (crear datos)",
+      "item": [
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{base_url}}/productos",
+            "body": { "mode": "urlencoded", "urlencoded": [
+              { "key": "nombre", "value": "Webcam HD" },
+              { "key": "precio", "value": "120.0" },
+              { "key": "stock",  "value": "15" }
+            ] }
+          },
+          "description": "Responde 302 -> /productos (HTML). Verifica con 'Listar productos'."
+        },
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{base_url}}/clientes",
+            "body": { "mode": "urlencoded", "urlencoded": [
+              { "key": "nombre", "value": "Maria Perez" },
+              { "key": "email",  "value": "maria@correo.com" }
+            ] }
+          },
+          "description": "Responde 302 -> /clientes (HTML). Verifica con 'Listar clientes'."
+        },
+        {
+          "name": "Crear pedido (descuenta stock)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{base_url}}/pedidos",
+            "body": { "mode": "urlencoded", "urlencoded": [
+              { "key": "clienteId",  "value": "1" },
+              { "key": "productoId", "value": "2" },
+              { "key": "cantidad",   "value": "1" }
+            ] }
+          },
+          "description": "Una sola transaccion: busca cliente, busca producto, descuenta stock y guarda el pedido. Comprueba en 'Listar productos' que el stock del Mouse bajo."
+        },
+        {
+          "name": "Crear pedido sin stock (5 monitores, solo hay 3)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{base_url}}/pedidos",
+            "body": { "mode": "urlencoded", "urlencoded": [
+              { "key": "clienteId",  "value": "1" },
+              { "key": "productoId", "value": "4" },
+              { "key": "cantidad",   "value": "5" }
+            ] }
+          },
+          "description": "ProductoService lanza IllegalStateException y PedidoController la muestra en la vista. No hay codigo HTTP 409: el error viaja en memoria, no por red. El pedido no se crea y el stock no cambia."
+        },
+        {
+          "name": "Crear pedido con cliente inexistente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{base_url}}/pedidos",
+            "body": { "mode": "urlencoded", "urlencoded": [
+              { "key": "clienteId",  "value": "99" },
+              { "key": "productoId", "value": "1" },
+              { "key": "cantidad",   "value": "1" }
+            ] }
+          },
+          "description": "IllegalArgumentException 'Cliente no encontrado: 99', pintada en la vista de pedidos."
+        }
+      ]
+    },
+    {
+      "name": "3. Vistas HTML",
+      "item": [
+        { "name": "Inicio",    "request": { "method": "GET", "url": "{{base_url}}/" } },
+        { "name": "Productos", "request": { "method": "GET", "url": "{{base_url}}/productos" } },
+        { "name": "Clientes",  "request": { "method": "GET", "url": "{{base_url}}/clientes" } },
+        { "name": "Pedidos",   "request": { "method": "GET", "url": "{{base_url}}/pedidos" } }
+      ]
+    }
+  ]
+}

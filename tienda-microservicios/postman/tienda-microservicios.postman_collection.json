@@ -1,0 +1,155 @@
+{
+  "info": {
+    "name": "Tienda Microservicios",
+    "description": "Endpoints de ms-productos (8081), ms-clientes (8082) y ms-pedidos (8080).\n\nImporta tambien el entorno 'Tienda Microservicios (local)' y seleccionalo arriba a la derecha.\n\nOrden sugerido: carpeta 1 -> 2 -> 3 -> 4 (saga).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. ms-productos (8081)",
+      "item": [
+        {
+          "name": "Listar productos",
+          "request": { "method": "GET", "url": "{{productos_url}}/productos" }
+        },
+        {
+          "name": "Buscar producto por id",
+          "request": { "method": "GET", "url": "{{productos_url}}/productos/1" }
+        },
+        {
+          "name": "Buscar producto inexistente (404)",
+          "request": { "method": "GET", "url": "{{productos_url}}/productos/99" }
+        },
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": "{{productos_url}}/productos",
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Webcam HD\",\n  \"precio\": 120.0,\n  \"stock\": 15\n}" }
+          }
+        },
+        {
+          "name": "Listar reservas (rastro de la saga)",
+          "request": { "method": "GET", "url": "{{productos_url}}/productos/reservas" }
+        }
+      ]
+    },
+    {
+      "name": "2. ms-clientes (8082)",
+      "item": [
+        {
+          "name": "Listar clientes",
+          "request": { "method": "GET", "url": "{{clientes_url}}/clientes" }
+        },
+        {
+          "name": "Buscar cliente por id",
+          "request": { "method": "GET", "url": "{{clientes_url}}/clientes/1" }
+        },
+        {
+          "name": "Buscar cliente inexistente (404)",
+          "request": { "method": "GET", "url": "{{clientes_url}}/clientes/99" }
+        },
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": "{{clientes_url}}/clientes",
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Maria Perez\",\n  \"email\": \"maria@correo.com\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. ms-pedidos (8080)",
+      "item": [
+        {
+          "name": "Listar pedidos (JSON)",
+          "request": { "method": "GET", "url": "{{pedidos_url}}/api/pedidos" }
+        },
+        {
+          "name": "Crear pedido (formulario, dispara la saga)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{pedidos_url}}/pedidos",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "clienteId",  "value": "1" },
+                { "key": "productoId", "value": "2" },
+                { "key": "cantidad",   "value": "1" }
+              ]
+            },
+            "description": "Es el mismo POST del formulario web: responde 302 y redirige a /pedidos (HTML). Postman sigue la redireccion y muestra la pagina. Luego comprueba 'Listar pedidos (JSON)' y 'Listar reservas'."
+          }
+        },
+        {
+          "name": "Crear pedido sin stock (5 monitores, solo hay 3)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" } ],
+            "url": "{{pedidos_url}}/pedidos",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "clienteId",  "value": "1" },
+                { "key": "productoId", "value": "4" },
+                { "key": "cantidad",   "value": "5" }
+              ]
+            },
+            "description": "El 409 nace en ms-productos y ms-pedidos lo pinta como mensaje de error en la vista. En /productos/reservas no queda ninguna reserva."
+          }
+        },
+        {
+          "name": "Pagina de inicio (HTML)",
+          "request": { "method": "GET", "url": "{{pedidos_url}}/" }
+        }
+      ]
+    },
+    {
+      "name": "4. Saga manual (reservar / confirmar / liberar)",
+      "description": "Llama directamente a ms-productos con los mismos pasos que hace ms-pedidos. Usa la variable de entorno {{opId}} como clave de idempotencia.",
+      "item": [
+        {
+          "name": "a) Reservar stock (opId fijo)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": "{{productos_url}}/productos/reservas",
+            "body": { "mode": "raw", "raw": "{\n  \"opId\": \"{{opId}}\",\n  \"productoId\": 1,\n  \"cantidad\": 2\n}" },
+            "description": "Ejercicio 2 del README: envia esta peticion DOS veces. El stock solo baja una vez (idempotencia). Cambia {{opId}} en el entorno y volvera a bajar."
+          }
+        },
+        {
+          "name": "b) Confirmar reserva",
+          "request": { "method": "POST", "url": "{{productos_url}}/productos/reservas/{{opId}}/confirmar" }
+        },
+        {
+          "name": "c) Liberar reserva (compensacion)",
+          "request": { "method": "POST", "url": "{{productos_url}}/productos/reservas/{{opId}}/liberar" }
+        },
+        {
+          "name": "Reservar con opId aleatorio",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": "{{productos_url}}/productos/reservas",
+            "body": { "mode": "raw", "raw": "{\n  \"opId\": \"{{$guid}}\",\n  \"productoId\": 3,\n  \"cantidad\": 1\n}" },
+            "description": "{{$guid}} es una variable dinamica de Postman: cada envio genera un opId nuevo, asi que el stock baja en cada llamada."
+          }
+        },
+        {
+          "name": "Reservar sin stock (409)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": "{{productos_url}}/productos/reservas",
+            "body": { "mode": "raw", "raw": "{\n  \"opId\": \"{{$guid}}\",\n  \"productoId\": 4,\n  \"cantidad\": 5\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}
