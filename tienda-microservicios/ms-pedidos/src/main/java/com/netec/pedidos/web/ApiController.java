@@ -1,12 +1,16 @@
 package com.netec.pedidos.web;
 
-import com.netec.pedidos.model.Pedido;
-import com.netec.pedidos.service.PedidoService;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.netec.pedidos.model.Pedido;
+import com.netec.pedidos.service.PedidoService;
 
 /**
  * Del ApiController del monolito solo queda esto.
@@ -29,4 +33,13 @@ public class ApiController {
     public List<Pedido> pedidos() {
         return pedidoService.listar();
     }
+
+    @PostMapping("/pedidos")
+    public Pedido crear(@RequestBody CrearPedidoRequest request) {
+        return pedidoService.crear(request.clienteId(), request.productoId(),
+                request.cantidad(), request.ventaId(), request.fechaHoraVenta());
+    }
+
+    public record CrearPedidoRequest(Long ventaId, Long clienteId, Long productoId,
+                                     int cantidad, LocalDateTime fechaHoraVenta) {}
 }

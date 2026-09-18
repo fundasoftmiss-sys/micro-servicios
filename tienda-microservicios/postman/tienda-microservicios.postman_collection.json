@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Tienda Microservicios",
-    "description": "Endpoints de ms-productos (8081), ms-clientes (8082) y ms-pedidos (8080).\n\nImporta tambien el entorno 'Tienda Microservicios (local)' y seleccionalo arriba a la derecha.\n\nOrden sugerido: carpeta 1 -> 2 -> 3 -> 4 (saga).",
+    "description": "Endpoints de ms-productos (8081), ms-clientes (8082), ms-pedidos (8080) y ms-ventas (8083).\n\nImporta tambien el entorno 'Tienda Microservicios (local)' y seleccionalo arriba a la derecha.\n\nOrden sugerido: carpeta 1 -> 2 -> 3 -> 5.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -105,6 +105,25 @@
         {
           "name": "Pagina de inicio (HTML)",
           "request": { "method": "GET", "url": "{{pedidos_url}}/" }
+        }
+      ]
+    },
+    {
+      "name": "5. ms-ventas (8083)",
+      "item": [
+        {
+          "name": "Crear venta y registrar pedido",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": "{{ventas_url}}/api/ventas",
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 1,\n  \"productoId\": 1,\n  \"cantidad\": 1\n}" },
+            "description": "Genera la venta, reserva stock y registra el pedido con ventaId y fechaHoraVenta."
+          }
+        },
+        {
+          "name": "Listar ventas",
+          "request": { "method": "GET", "url": "{{ventas_url}}/api/ventas" }
         }
       ]
     },

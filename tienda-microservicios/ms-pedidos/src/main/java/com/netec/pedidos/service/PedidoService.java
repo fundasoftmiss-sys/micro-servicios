@@ -1,5 +1,11 @@
 package com.netec.pedidos.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.netec.pedidos.client.StockInsuficienteException;
 import com.netec.pedidos.model.Pedido;
 import com.netec.pedidos.port.CatalogoPort;
@@ -7,10 +13,6 @@ import com.netec.pedidos.port.ClienteInfo;
 import com.netec.pedidos.port.ClientesPort;
 import com.netec.pedidos.port.ProductoInfo;
 import com.netec.pedidos.repository.PedidoRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * COMPARA ESTE METODO CON EL crear() DEL MONOLITO.
@@ -57,6 +59,11 @@ public class PedidoService {
     }
 
     public Pedido crear(Long clienteId, Long productoId, int cantidad) {
+        return crear(clienteId, productoId, cantidad, null, null);
+    }
+
+    public Pedido crear(Long clienteId, Long productoId, int cantidad,
+                        Long ventaId, LocalDateTime fechaHoraVenta) {
 
         // --- lecturas: dos llamadas de red donde antes habia dos metodos ---
         ClienteInfo cliente = clientes.buscar(clienteId);
@@ -75,7 +82,7 @@ public class PedidoService {
 
         try {
             // --- paso 2: escritura local, dentro de su propia transaccion ---
-            Pedido pedido = registro.guardar(cliente, producto, cantidad);
+            Pedido pedido = registro.guardar(cliente, producto, cantidad, ventaId, fechaHoraVenta);
 
             // --- paso 3: confirmar ---
             catalogo.confirmarReserva(opId);

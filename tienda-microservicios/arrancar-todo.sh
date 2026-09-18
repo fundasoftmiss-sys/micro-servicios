@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Levanta los tres servicios en segundo plano.
+# Levanta los cuatro servicios en segundo plano.
 set -e
 cd "$(dirname "$0")"
 mkdir -p logs
@@ -16,11 +16,15 @@ sleep 25
 echo "Arrancando ms-pedidos (8080)..."
 (cd ms-pedidos && mvn -q spring-boot:run > ../logs/ms-pedidos.log 2>&1 &)
 
+echo "Arrancando ms-ventas (8083)..."
+(cd ms-ventas && mvn -q spring-boot:run > ../logs/ms-ventas.log 2>&1 &)
+
 cat <<'FIN'
 
   ms-productos  http://localhost:8081/productos
   ms-clientes   http://localhost:8082/clientes
   ms-pedidos    http://localhost:8080
+  ms-ventas     http://localhost:8083/api/ventas
 
   Logs en ./logs/
   Para parar:  pkill -f spring-boot:run

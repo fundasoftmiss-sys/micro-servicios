@@ -16,11 +16,15 @@ tienda-monolito 1.0.0                    tienda-microservicios
 └──────────────────────────┘                                                 ↑ era el monolito
 ```
 
+Ademas, `ms-ventas` (`:8083`) genera una venta y solicita a `ms-pedidos` que
+registre el pedido asociado. `ms-pedidos` conserva `ventaId` y `fechaHoraVenta`
+para relacionar ambos registros.
+
 ## Requisitos
 
 - JDK 17 o superior
 - Maven 3.8+
-- Tres terminales libres (o usar el script de arranque)
+- Cuatro terminales libres (o usar el script de arranque)
 
 ## Arrancar
 
@@ -35,6 +39,7 @@ O a mano, **en este orden** (ms-pedidos necesita a los otros dos para crear sus 
 cd ms-productos && mvn spring-boot:run     # 8081
 cd ms-clientes  && mvn spring-boot:run     # 8082
 cd ms-pedidos   && mvn spring-boot:run     # 8080
+cd ms-ventas    && mvn spring-boot:run     # 8083
 ```
 
 Abrir **http://localhost:8080**
@@ -47,9 +52,25 @@ Abrir **http://localhost:8080**
 | `http://localhost:8081/productos` | ms-productos | JSON del catálogo |
 | `http://localhost:8081/productos/reservas` | ms-productos | **El rastro de la saga** |
 | `http://localhost:8082/clientes` | ms-clientes | JSON de clientes |
-| `.../h2-console` en 8080, 8081 y 8082 | los tres | **Tres bases de datos distintas** |
+| `http://localhost:8083/api/ventas` | ms-ventas | Crear y listar ventas |
+| `.../h2-console` en 8080, 8081, 8082 y 8083 | los cuatro | **Cuatro bases de datos distintas** |
 
 ---
+
+### Crear una venta
+
+`ms-ventas` genera el ID y la fecha/hora, guarda la venta y llama a
+`ms-pedidos` para ejecutar la saga de reserva y registrar el pedido:
+
+```bash
+curl -X POST http://localhost:8083/api/ventas \
+   -H "Content-Type: application/json" \
+   -d '{"clienteId":1,"productoId":1,"cantidad":1}'
+```
+
+La respuesta incluye `id`, `fechaHora` y `pedidoId`. El pedido correspondiente
+se puede consultar en `http://localhost:8080/api/pedidos` y contiene los mismos
+`ventaId` y `fechaHoraVenta`.
 
 ## Qué mirar en el código
 

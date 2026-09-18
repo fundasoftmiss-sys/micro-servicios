@@ -1,11 +1,11 @@
 package com.netec.pedidos.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-import java.time.LocalDateTime;
 
 /**
  * COMPARA ESTO CON EL Pedido DEL MONOLITO.
@@ -29,6 +29,9 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long ventaId;
+    private LocalDateTime fechaHoraVenta;
+
     private Long clienteId;
     private String clienteNombre;      // copia historica
 
@@ -44,6 +47,10 @@ public class Pedido {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+    public Long getVentaId() { return ventaId; }
+    public void setVentaId(Long ventaId) { this.ventaId = ventaId; }
+    public LocalDateTime getFechaHoraVenta() { return fechaHoraVenta; }
+    public void setFechaHoraVenta(LocalDateTime fechaHoraVenta) { this.fechaHoraVenta = fechaHoraVenta; }
     public Long getClienteId() { return clienteId; }
     public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
     public String getClienteNombre() { return clienteNombre; }

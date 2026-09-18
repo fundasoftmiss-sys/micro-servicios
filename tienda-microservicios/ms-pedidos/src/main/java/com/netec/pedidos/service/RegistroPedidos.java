@@ -1,13 +1,14 @@
 package com.netec.pedidos.service;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.netec.pedidos.model.Pedido;
 import com.netec.pedidos.port.ClienteInfo;
 import com.netec.pedidos.port.ProductoInfo;
 import com.netec.pedidos.repository.PedidoRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 /**
  * La transaccion SOBREVIVIO a la migracion, pero encogio: ahora solo cubre
@@ -34,7 +35,16 @@ public class RegistroPedidos {
 
     @Transactional
     public Pedido guardar(ClienteInfo cliente, ProductoInfo producto, int cantidad) {
+        return guardar(cliente, producto, cantidad, null, null);
+    }
+
+    @Transactional
+    public Pedido guardar(ClienteInfo cliente, ProductoInfo producto, int cantidad,
+                           Long ventaId, LocalDateTime fechaHoraVenta) {
         Pedido pedido = new Pedido();
+
+        pedido.setVentaId(ventaId);
+        pedido.setFechaHoraVenta(fechaHoraVenta);
 
         pedido.setClienteId(cliente.id());
         pedido.setClienteNombre(cliente.nombre());        // copia historica
