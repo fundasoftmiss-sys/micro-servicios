@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class ConfiguracionSeguridad {
@@ -30,4 +32,27 @@ public class ConfiguracionSeguridad {
 
         return new InMemoryUserDetailsManager(admin1, admin2, admin3);
     }
+
+@Bean
+public SecurityFilterChain seguridad(HttpSecurity http) throws Exception {
+
+    http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/login", "/error").permitAll()
+            .requestMatchers("/", "/pedidos/**").hasRole("PEDIDOS")
+            .requestMatchers("/ventas/**").hasRole("VENTAS")
+            .requestMatchers("/productos/**").hasRole("PRODUCTOS")
+            .anyRequest().denyAll()
+        )
+        .formLogin(form -> form.permitAll())
+        .exceptionHandling(ex -> ex
+            .accessDeniedHandler((request, response, exception) -> {
+                response.setStatus(403);
+                response.getWriter().write("Acceso denegado");
+            })
+        );
+
+    return http.build();
+}
 }
